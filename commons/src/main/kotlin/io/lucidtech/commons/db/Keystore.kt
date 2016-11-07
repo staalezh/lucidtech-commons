@@ -1,13 +1,12 @@
-package com.doplr.db
+package io.lucidtech.commons.db
 
 import android.content.Context
-import com.doplr.util.getKeystore
 import kotlin.reflect.KProperty
 
 open class Keystore(private val context: Context, private val name: String = Keystore.DEFAULT) {
     companion object { const val DEFAULT = "default" }
 
-    private val keystore = getKeystore(context, name)
+    private val keystore = context.getSharedPreferences(name, Context.MODE_PRIVATE)
     private val editor = keystore.edit()
 
     inner class KeystoreDelegate<T>(private val field: String, private val default: T) {

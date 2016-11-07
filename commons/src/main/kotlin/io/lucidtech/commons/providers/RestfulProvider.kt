@@ -1,10 +1,9 @@
-package com.doplr.providers
+package io.lucidtech.commons.providers
 
 import android.net.Uri
 import android.util.Log
-import com.doplr.annotations.*
-import com.doplr.async.ObservablePromise
-import io.lucidtech.commons.providers.Provider
+import io.lucidtech.commons.annotations.*
+import io.lucidtech.commons.async.ObservablePromise
 
 import java.lang.reflect.InvocationTargetException
 
@@ -38,7 +37,7 @@ open class RestfulProvider<T, V> : Provider<T, V> {
             }
         }
 
-        Log.d(TAG, "Could not find fetch handler for uri ${uri.toString()}")
+        Log.d(TAG, "Could not find fetch handler for uri $uri")
         return null
     }
 
@@ -60,7 +59,7 @@ open class RestfulProvider<T, V> : Provider<T, V> {
             }
         }
 
-        Log.d(TAG, "Could not find fetchAll handler for uri ${uri.toString()}")
+        Log.d(TAG, "Could not find fetchAll handler for uri $uri")
         return null
     }
 
@@ -82,7 +81,7 @@ open class RestfulProvider<T, V> : Provider<T, V> {
             }
         }
 
-        throw IllegalArgumentException("Cannot find insert handler for ${uri.toString()}")
+        throw IllegalArgumentException("Cannot find insert handler for $uri")
     }
 
     override fun insert(uri: Uri, objects: List<T>): ObservablePromise<List<T>>? {
@@ -103,7 +102,7 @@ open class RestfulProvider<T, V> : Provider<T, V> {
             }
         }
 
-        throw IllegalArgumentException("Cannot find insertAll handler for ${uri.toString()}")
+        throw IllegalArgumentException("Cannot find insertAll handler for $uri")
     }
 
     override fun update(uri: Uri, obj: T): ObservablePromise<T>? {
@@ -124,7 +123,7 @@ open class RestfulProvider<T, V> : Provider<T, V> {
             }
         }
 
-        throw IllegalArgumentException("Cannot find update handler for ${uri.toString()}")
+        throw IllegalArgumentException("Cannot find update handler for $uri")
     }
 
     override fun delete(uri: Uri): ObservablePromise<T>? {
@@ -145,14 +144,14 @@ open class RestfulProvider<T, V> : Provider<T, V> {
             }
         }
 
-        throw IllegalArgumentException("Cannot find delete handler for ${uri.toString()}")
+        throw IllegalArgumentException("Cannot find delete handler for $uri")
     }
 
     private fun match(matchUri: Uri, matchExprPath: String): MatchResult {
         val result = mutableMapOf<String, String>()
         val authority = javaClass.getAnnotation(Authority::class.java).value
 
-        val uri = Uri.parse("doplr://$authority$matchExprPath")
+        val uri = Uri.parse("$SCHEME://$authority$matchExprPath")
         if (uri.pathSegments.size == matchUri.pathSegments.size) {
             val pairs = uri.pathSegments.zip(matchUri.pathSegments).filter {
                 p -> p.first != p.second
@@ -176,5 +175,7 @@ open class RestfulProvider<T, V> : Provider<T, V> {
 
     companion object {
         private val TAG = "RestfulProvider"
+
+        const val SCHEME = "lucid"
     }
 }
