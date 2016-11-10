@@ -21,6 +21,8 @@ open class CachedProvider<T : Identifiable>(private val context: Context,
     private val objectCache: Cache<T>
     private val fetchAllCache: Cache<Array<T>>
 
+    var clearParentOnDelete = true
+
     init {
         val name = wrappedProvider.javaClass.canonicalName
         this.objectCache = Cache<T>(context, name, 50000000)
@@ -98,7 +100,11 @@ open class CachedProvider<T : Identifiable>(private val context: Context,
 
     override fun delete(uri: Uri): ObservablePromise<T>? {
         clear(uri)
-        clear(UriUtils.getParentUri(uri))
+
+        if (clearParentOnDelete) {
+            clear(UriUtils.getParentUri(uri))
+        }
+
         return super.delete(uri)
     }
 
